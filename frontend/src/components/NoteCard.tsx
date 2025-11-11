@@ -1,15 +1,5 @@
 import React from 'react';
-
-export interface Note {
-  id: string;
-  title: string;
-  content: string;
-  category: {
-    name: string;
-    color: string; // e.g., 'bg-[--color-cat-random]'
-  };
-  date: string;
-}
+import {Note} from "@/types/note";
 
 interface NoteCardProps {
   note: Note;
