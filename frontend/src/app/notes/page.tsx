@@ -2,7 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useState, useMemo } from 'react';
 import Button from '@/components/Button';
 import NoteCard, { Note } from '@/components/NoteCard';
 
@@ -24,25 +25,40 @@ const mockNotes: Note[] = [
 ];
 
 const Sidebar = ({ notes }: { notes: Note[] }) => {
-  const categoryCounts = notes.reduce((acc, note) => {
-    acc[note.category.name] = (acc[note.category.name] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const searchParams = useSearchParams();
+  const activeCategory = searchParams.get('category');
+
+  const categoryCounts = useMemo(() => {
+    return notes.reduce((acc, note) => {
+      acc[note.category.name] = (acc[note.category.name] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  }, [notes]);
 
   return (
-    <aside className="w-64 p-8">
+    <aside className="w-64 p-8 flex-shrink-0">
       <h2 className="text-lg font-semibold mb-4">All Categories</h2>
       <ul>
+        <li className="mb-2">
+          <Link 
+            href="/notes" 
+            className={`flex items-center justify-between text-[--color-foreground] hover:font-semibold ${!activeCategory ? 'font-bold' : ''}`}
+          >
+            <span>View All</span>
+            <span className="text-sm text-gray-500">{notes.length}</span>
+          </Link>
+        </li>
         {Object.values(categories).map(cat => (
           <li key={cat.name} className="mb-2">
-            <Link href={`/notes?category=${cat.name}`}>
-              <a className="flex items-center justify-between text-[--color-foreground] hover:font-semibold">
-                <div className="flex items-center gap-3">
-                  <span className={`w-3 h-3 rounded-full ${cat.color}`}></span>
-                  {cat.name}
-                </div>
-                <span className="text-sm text-gray-500">{categoryCounts[cat.name] || 0}</span>
-              </a>
+            <Link
+              href={`/notes?category=${cat.name}`}
+              className={`flex items-center justify-between text-[--color-foreground] hover:font-semibold ${activeCategory === cat.name ? 'font-bold' : ''}`}
+            >
+              <div className="flex items-center gap-3">
+                <span className={`w-3 h-3 rounded-full ${cat.color}`}></span>
+                {cat.name}
+              </div>
+              <span className="text-sm text-gray-500">{categoryCounts[cat.name] || 0}</span>
             </Link>
           </li>
         ))}
@@ -77,8 +93,16 @@ const NoteGrid = ({ notes }: { notes: Note[] }) => (
 );
 
 export default function NotesPage() {
-  const [notes, setNotes] = useState(mockNotes);
-  const hasNotes = notes.length > 0;
+  const [notes] = useState(mockNotes);
+  const searchParams = useSearchParams();
+  const activeCategory = searchParams.get('category');
+
+  const filteredNotes = useMemo(() => {
+    if (!activeCategory) return notes;
+    return notes.filter(note => note.category.name === activeCategory);
+  }, [notes, activeCategory]);
+
+  const hasNotes = filteredNotes.length > 0;
 
   return (
     <div className="flex min-h-screen">
@@ -90,7 +114,7 @@ export default function NotesPage() {
           </Link>
         </div>
         {hasNotes ? (
-          <NoteGrid notes={notes} />
+          <NoteGrid notes={filteredNotes} />
         ) : (
           <EmptyNotes />
         )}
