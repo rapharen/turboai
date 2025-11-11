@@ -23,29 +23,15 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
     return (
         <aside className="w-[213px] bg-[--color-background] flex-shrink-0">
             <div className="pt-8 pb-6">
-                <h2 className="text-base font-semibold text-[--color-foreground] px-6 mb-6">
-                    All Categories
-                </h2>
+                <Link
+                    href="/notes"
+                    className="block px-6 mb-6 hover:opacity-80 transition-opacity"
+                >
+                    <h2 className="text-base font-semibold text-[--color-foreground]">
+                        All Categories
+                    </h2>
+                </Link>
                 <ul className="space-y-1 px-4">
-                    <li>
-                        <Link
-                            href="/notes"
-                            className={`
-                                flex items-center justify-between 
-                                py-2 px-2 rounded-lg 
-                                transition-colors
-                                ${!activeCategory
-                                ? 'bg-[--color-foreground]/5 text-[--color-foreground] font-medium'
-                                : 'text-[--color-foreground]/70 hover:bg-[--color-foreground]/5'
-                            }
-                            `}
-                        >
-                            <span className="text-sm">View All</span>
-                            <span className="text-xs text-[--color-foreground]/50">
-                                {notes.length}
-                            </span>
-                        </Link>
-                    </li>
                     {categories.map(cat => (
                         <li key={cat.name}>
                             <Link
@@ -61,7 +47,10 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
                                 `}
                             >
                                 <div className="flex items-center gap-2">
-                                    <span className={`w-2 h-2 rounded-full ${cat.color}`}></span>
+                                    <span
+                                        className="w-2 h-2 rounded-full"
+                                        style={{backgroundColor: `var(${cat.color.replace('bg-[', '').replace(']', '')})`}}
+                                    ></span>
                                     <span className="text-sm">{cat.name}</span>
                                 </div>
                                 <span className="text-xs text-[--color-foreground]/50">
