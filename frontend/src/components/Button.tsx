@@ -15,15 +15,11 @@ const Button: React.FC<ButtonProps> = ({children, className, ...props}) => {
         py-2 px-6
         rounded-full 
         border border-[--color-accent]
+        hover:bg-[var(--accent-20)]
+        active:bg-[var(--accent-30)]
         transition-colors
         ${className}
       `}
-            style={{
-                ['--hover-bg' as string]: 'var(--color-accent)',
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-background)'}
-            onMouseDown={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent)'}
             {...props}
         >
             {children}

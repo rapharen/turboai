@@ -4,6 +4,9 @@
   --background: #F8F1E4; /* Light cream background */
   --foreground: #5D544A; /* Dark brown text */
   --accent: #D5C5AE;     /* Input borders, button bg */
+  /* Precomputed alpha variants for accent (based on #5D544A) */
+  --accent-20: #5D544A33; /* ~20% */
+  --accent-30: #5D544A4D; /* ~30% */
   --link: #9F9282;       /* "We're already friends" link */
 
   /* Provide default font variables so Tailwind can resolve them at build time.
