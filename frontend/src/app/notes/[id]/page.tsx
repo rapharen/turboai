@@ -4,6 +4,7 @@ import React, {useState, useEffect} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import CategoryDropdown from '@/components/CategoryDropdown';
 import {Note} from "@/types/note";
+import {getCategoryColorVar} from "@/utils/utils";
 
 const categories = {
     random: {name: 'Random Thoughts', color: 'bg-[--color-cat-random]'},
@@ -41,11 +42,6 @@ export default function NoteEditorPage() {
             }
         }
     }, [noteId]);
-
-    const getCategoryColorVar = (color: string) => {
-        const match = color.match(/bg-\[(--color-cat-\w+)]/);
-        return match ? match[1] : '--color-cat-random';
-    };
 
     const colorVar = getCategoryColorVar(selectedCategory.color);
 

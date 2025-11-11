@@ -1,15 +1,12 @@
 import React from 'react';
 import {Note} from "@/types/note";
+import {getCategoryColorVar} from "@/utils/utils";
 
 interface NoteCardProps {
     note: Note;
 }
 
 const NoteCard: React.FC<NoteCardProps> = ({note}) => {
-    const getCategoryColorVar = (color: string) => {
-        const match = color.match(/bg-\[(--color-cat-\w+)]/);
-        return match ? match[1] : '--color-cat-random';
-    };
 
     const colorVar = getCategoryColorVar(note.category.color);
 
