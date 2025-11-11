@@ -7,9 +7,9 @@ import NoteCard, { Note } from '@/components/NoteCard';
 import NoteEditorModal from '@/components/NoteEditorModal';
 
 const categories = {
-  random: { name: 'Random Thoughts', color: 'var(--color-cat-random)' },
-  school: { name: 'School', color: 'var(--color-cat-school)' },
-  personal: { name: 'Personal', color: 'var(--color-cat-personal)' },
+  random: { name: 'Random Thoughts', color: 'bg-[--color-cat-random]' },
+  school: { name: 'School', color: 'bg-[--color-cat-school]' },
+  personal: { name: 'Personal', color: 'bg-[--color-cat-personal]' },
 };
 
 // Mock data - we'll replace this with API data later
@@ -37,7 +37,7 @@ const Sidebar = ({ notes }: { notes: Note[] }) => {
           <li key={cat.name} className="mb-2">
             <a href="#" className="flex items-center justify-between text-[--color-foreground] hover:font-semibold">
               <div className="flex items-center gap-3">
-                <span style={{ backgroundColor: cat.color }} className="w-3 h-3 rounded-full"></span>
+                <span className={`w-3 h-3 rounded-full ${cat.color}`}></span>
                 {cat.name}
               </div>
               <span className="text-sm text-gray-500">{categoryCounts[cat.name] || 0}</span>
@@ -94,7 +94,7 @@ export default function NotesPage() {
   return (
     <div className="flex min-h-screen">
       <Sidebar notes={notes} />
-      <main className="flex-1 p-8 relative bg-white/50">
+      <main className="flex-1 p-8 relative">
         <div className="absolute top-8 right-8">
           <Button onClick={() => handleOpenModal(null)}>+ New Note</Button>
         </div>

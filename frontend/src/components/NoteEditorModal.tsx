@@ -29,18 +29,17 @@ const NoteEditorModal: React.FC<NoteEditorModalProps> = ({ isOpen, onClose, note
 
   if (!isOpen) return null;
 
-  const noteBgColor = selectedCategory.color.replace('bg-', ''); // Get the raw color variable
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 p-4">
-      <div className="bg-[--background] rounded-2xl shadow-2xl w-full max-w-3xl h-[80vh] flex flex-col p-6 relative">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-6">
+      <div className="bg-[--background] rounded-2xl shadow-xl w-full max-w-5xl h-[85vh] flex flex-col p-6 relative">
         {/* Close Button */}
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
 
         {/* Editor Area */}
-        <div style={{ backgroundColor: `var(--${noteBgColor})` }} className="flex-1 rounded-xl p-6 flex flex-col">
+        <div className={`${selectedCategory.color} flex-1 rounded-xl p-6 flex flex-col ring-1 ring-black/10`}
+        >
           <div className="flex justify-between items-center mb-4">
             <CategoryDropdown 
               categories={categories}
@@ -67,7 +66,7 @@ const NoteEditorModal: React.FC<NoteEditorModalProps> = ({ isOpen, onClose, note
 
           {/* Voice Transcription Button */}
           <div className="flex justify-end mt-4">
-            <button className="w-10 h-10 bg-gray-800 text-white rounded-full flex items-center justify-center">
+            <button className="w-10 h-10 bg-gray-800 text-white rounded-full flex items-center justify-center shadow">
               {/* Placeholder for Mic Icon */}
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4z" /><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm0-2a6 6 0 100-12 6 6 0 000 12z" clipRule="evenodd" /></svg>
             </button>
