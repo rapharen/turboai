@@ -6,6 +6,13 @@
   --accent: #D5C5AE;     /* Input borders, button bg */
   --link: #9F9282;       /* "We're already friends" link */
 
+  /* Provide default font variables so Tailwind can resolve them at build time.
+     next/font will override these via className on <body>. */
+  --font-geist-sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Noto Sans,
+    Ubuntu, Cantarell, Helvetica Neue, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
   /* Category Colors */
   --cat-random: #EF9C66;
   --cat-school: #FCDC94;
