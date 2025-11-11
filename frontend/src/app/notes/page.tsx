@@ -36,13 +36,13 @@ const Sidebar = ({ notes }: { notes: Note[] }) => {
   }, [notes]);
 
   return (
-    <aside className="w-64 p-8 flex-shrink-0">
-      <h2 className="text-lg font-semibold mb-4">All Categories</h2>
+    <aside className="w-[280px] p-8 flex-shrink-0 border-r border-gray-200">
+      <h2 className="text-xl font-medium text-center mb-8">All Categories</h2>
       <ul>
         <li className="mb-2">
           <Link 
             href="/notes" 
-            className={`flex items-center justify-between text-[--color-foreground] hover:font-semibold ${!activeCategory ? 'font-bold' : ''}`}
+            className={`flex items-center justify-between py-2 px-4 rounded-lg hover:bg-gray-100 ${!activeCategory ? 'font-medium bg-gray-100' : 'text-gray-700'}`}
           >
             <span>View All</span>
             <span className="text-sm text-gray-500">{notes.length}</span>
@@ -52,10 +52,10 @@ const Sidebar = ({ notes }: { notes: Note[] }) => {
           <li key={cat.name} className="mb-2">
             <Link
               href={`/notes?category=${cat.name}`}
-              className={`flex items-center justify-between text-[--color-foreground] hover:font-semibold ${activeCategory === cat.name ? 'font-bold' : ''}`}
+              className={`flex items-center justify-between py-2 px-4 rounded-lg hover:bg-gray-100 ${activeCategory === cat.name ? 'font-medium bg-gray-100' : 'text-gray-700'}`}
             >
               <div className="flex items-center gap-3">
-                <span className={`w-3 h-3 rounded-full ${cat.color}`}></span>
+                <span className={`w-2.5 h-2.5 rounded-full ${cat.color}`}></span>
                 {cat.name}
               </div>
               <span className="text-sm text-gray-500">{categoryCounts[cat.name] || 0}</span>
