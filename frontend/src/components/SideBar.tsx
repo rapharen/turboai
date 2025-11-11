@@ -41,10 +41,11 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
                                     py-2 px-2 rounded-lg 
                                     transition-colors
                                     ${activeCategory === cat.name
-                                    ? 'bg-[--color-foreground]/5 text-[--color-foreground] font-medium'
-                                    : 'text-[--color-foreground]/70 hover:bg-[--color-foreground]/5'
+                                    ? 'text-[--color-foreground] font-medium'
+                                    : 'text-[--color-foreground]/70 hover:bg-[--color-accent]/10'
                                 }
                                 `}
+                                style={activeCategory === cat.name ? {backgroundColor: 'var(--color-accent)'} : undefined}
                             >
                                 <div className="flex items-center gap-2">
                                     <span
@@ -53,7 +54,7 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
                                     ></span>
                                     <span className="text-sm">{cat.name}</span>
                                 </div>
-                                <span className="text-xs text-[--color-foreground]/50">
+                                <span className="text-xs font-bold text-[--color-foreground]/50">
                                     {categoryCounts[cat.name] || 0}
                                 </span>
                             </Link>
