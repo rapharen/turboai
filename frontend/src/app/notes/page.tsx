@@ -5,9 +5,10 @@ import Link from 'next/link';
 import {useSearchParams} from 'next/navigation';
 import {useState, useMemo} from 'react';
 import Button from '@/components/Button';
-import NoteCard, {Note} from '@/components/NoteCard';
+import NoteCard from '@/components/NoteCard';
 import Sidebar from "@/components/SideBar";
 import {Category} from "@/types/category";
+import {Note} from "@/types/note";
 
 const categories: Category[] = [
     {name: 'Random Thoughts', color: 'bg-[--color-cat-random]'},
@@ -15,7 +16,6 @@ const categories: Category[] = [
     {name: 'Personal', color: 'bg-[--color-cat-personal]'},
 ];
 
-// Mock data - we'll replace this with API data later
 const mockNotes: Note[] = [
     {id: '1', title: 'Grocery List', content: '• Milk\n• Eggs\n• Bread', category: categories[0], date: 'today'},
     {
