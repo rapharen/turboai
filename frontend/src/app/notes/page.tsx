@@ -52,7 +52,7 @@ const Sidebar = ({ notes }: { notes: Note[] }) => {
 const EmptyNotes = () => (
   <div className="flex flex-col items-center justify-center h-full text-center">
     <Image
-      src="/assets/empty-notes-boba.svg" // Make sure you've placed this asset here
+      src="/assets/empty-notes-boba.png" // Make sure you've placed this asset here
       alt="A cute boba tea character"
       width={200}
       height={200}

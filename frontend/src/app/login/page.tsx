@@ -8,7 +8,7 @@ export default function LoginPage() {
       <div className="flex flex-col items-center gap-6 text-center w-full max-w-xs">
         
         <Image
-          src="/assets/login-cactus.svg" // Make sure you've placed this asset here
+          src="/assets/login-cactus.png" // Make sure you've placed this asset here
           alt="A cute cactus in a pot, welcoming the user back"
           width={150}
           height={100}
