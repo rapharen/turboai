@@ -4,7 +4,7 @@ export interface Note {
     content: string;
     category: {
         name: string;
-        color: string; // e.g., 'bg-[--color-cat-random]'
+        color: string;
     };
     date: string;
 }

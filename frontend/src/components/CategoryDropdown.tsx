@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 
 export interface Category {
     name: string;
-    color: string; // e.g., 'bg-[--color-cat-random]'
+    color: string;
 }
 
 interface CategoryDropdownProps {

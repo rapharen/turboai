@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FBF8F1; /* Light cream background */
+  --background: #F8F1E4; /* Light cream background */
   --foreground: #5D544A; /* Dark brown text */
   --accent: #D5C5AE;     /* Input borders, button bg */
   --link: #9F9282;       /* "We're already friends" link */

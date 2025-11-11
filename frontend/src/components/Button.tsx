@@ -15,7 +15,8 @@ const Button: React.FC<ButtonProps> = ({children, className, ...props}) => {
         py-2 px-6
         rounded-full 
         border border-[--color-accent]
-        hover:bg-[--color-accent]/10
+        hover:bg-[--color-accent]/20
+        active:bg-[--color-accent]/30
         transition-colors
         ${className}
       `}

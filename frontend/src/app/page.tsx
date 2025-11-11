@@ -6,13 +6,16 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-6 text-center w-full max-w-xs">
-        <Image
-          src="/assets/login-cactus.png"
-          alt="A cute cactus in a pot, welcoming the user back"
-          width={140}
-          height={140}
-          priority
-        />
+        <div className="relative w-[140px] h-[140px]">
+          <Image
+            src="/assets/login-cactus.png"
+            alt="A cute cactus in a pot, welcoming the user back"
+            fill
+            sizes="140px"
+            className="object-contain"
+            priority
+          />
+        </div>
 
         <h1 className="text-4xl font-serif text-[--color-foreground]">
           Yay, You're Back!
