@@ -1,10 +1,10 @@
 "use client";
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 import Button from '@/components/Button';
 import NoteCard, { Note } from '@/components/NoteCard';
-import NoteEditorModal from '@/components/NoteEditorModal';
 
 const categories = {
   random: { name: 'Random Thoughts', color: 'bg-[--color-cat-random]' },
@@ -35,13 +35,15 @@ const Sidebar = ({ notes }: { notes: Note[] }) => {
       <ul>
         {Object.values(categories).map(cat => (
           <li key={cat.name} className="mb-2">
-            <a href="#" className="flex items-center justify-between text-[--color-foreground] hover:font-semibold">
-              <div className="flex items-center gap-3">
-                <span className={`w-3 h-3 rounded-full ${cat.color}`}></span>
-                {cat.name}
-              </div>
-              <span className="text-sm text-gray-500">{categoryCounts[cat.name] || 0}</span>
-            </a>
+            <Link href={`/notes?category=${cat.name}`}>
+              <a className="flex items-center justify-between text-[--color-foreground] hover:font-semibold">
+                <div className="flex items-center gap-3">
+                  <span className={`w-3 h-3 rounded-full ${cat.color}`}></span>
+                  {cat.name}
+                </div>
+                <span className="text-sm text-gray-500">{categoryCounts[cat.name] || 0}</span>
+              </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -64,31 +66,18 @@ const EmptyNotes = () => (
   </div>
 );
 
-const NoteGrid = ({ notes, onNoteClick }: { notes: Note[]; onNoteClick: (note: Note) => void; }) => (
+const NoteGrid = ({ notes }: { notes: Note[] }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {notes.map(note => (
-      <div key={note.id} onClick={() => onNoteClick(note)} className="cursor-pointer">
+      <Link key={note.id} href={`/notes/${note.id}`} className="cursor-pointer">
         <NoteCard note={note} />
-      </div>
+      </Link>
     ))}
   </div>
 );
 
 export default function NotesPage() {
   const [notes, setNotes] = useState(mockNotes);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [noteToEdit, setNoteToEdit] = useState<Note | null>(null);
-
-  const handleOpenModal = (note: Note | null) => {
-    setNoteToEdit(note);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setNoteToEdit(null);
-  };
-
   const hasNotes = notes.length > 0;
 
   return (
@@ -96,21 +85,16 @@ export default function NotesPage() {
       <Sidebar notes={notes} />
       <main className="flex-1 p-8 relative">
         <div className="absolute top-8 right-8">
-          <Button onClick={() => handleOpenModal(null)}>+ New Note</Button>
+          <Link href="/notes/new">
+            <Button>+ New Note</Button>
+          </Link>
         </div>
         {hasNotes ? (
-          <NoteGrid notes={notes} onNoteClick={handleOpenModal} />
+          <NoteGrid notes={notes} />
         ) : (
           <EmptyNotes />
         )}
       </main>
-
-      <NoteEditorModal 
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        noteToEdit={noteToEdit || undefined}
-        categories={Object.values(categories)}
-      />
     </div>
   );
 }

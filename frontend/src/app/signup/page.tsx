@@ -9,8 +9,8 @@ export default function SignUpPage() {
         <Image
           src="/assets/signup-cat.png"
           alt="A cute cat lying down, welcoming a new user"
-          width={150}
-          height={100}
+          width={140}
+          height={140}
           priority
         />
 

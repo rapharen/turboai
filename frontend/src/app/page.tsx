@@ -9,8 +9,8 @@ export default function LoginPage() {
         <Image
           src="/assets/login-cactus.png"
           alt="A cute cactus in a pot, welcoming the user back"
-          width={150}
-          height={100}
+          width={140}
+          height={140}
           priority
         />
 
