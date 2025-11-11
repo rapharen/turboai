@@ -12,11 +12,11 @@ const NoteCard: React.FC<NoteCardProps> = ({note}) => {
 
     return (
         <div
-            className="rounded-xl h-64 p-4 shadow-sm border border-black/10 flex flex-col cursor-pointer transition-all hover:shadow-md"
+            className="rounded-xl h-50 p-4 shadow-sm border border-black/10 flex flex-col cursor-pointer transition-all hover:shadow-md"
             style={{backgroundColor: `var(${colorVar})`}}
         >
             <div className="flex justify-between items-start text-[11px] text-[--color-foreground] mb-2">
-        <span className="px-2 py-0.5 rounded-md bg-white/40 border border-black/5 font-medium">
+        <span className="px-2 py-0.5 font-extrabold">
           {note.date}
         </span>
                 <span className="font-medium">{note.category.name}</span>
