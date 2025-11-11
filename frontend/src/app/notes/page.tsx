@@ -11,9 +11,9 @@ import {Category} from "@/types/category";
 import {Note} from "@/types/note";
 
 const categories: Category[] = [
-    {name: 'Random Thoughts', color: 'bg-[--color-cat-random]'},
-    {name: 'School', color: 'bg-[--color-cat-school]'},
-    {name: 'Personal', color: 'bg-[--color-cat-personal]'},
+    {name: 'Random Thoughts', color: '#EF9C66'},
+    {name: 'School', color: '#FCDC94'},
+    {name: 'Personal', color: '#C8CFA0'},
 ];
 
 const mockNotes: Note[] = [

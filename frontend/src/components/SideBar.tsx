@@ -49,7 +49,7 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
                                 <div className="flex items-center gap-2">
                                     <span
                                         className="w-2 h-2 rounded-full"
-                                        style={{backgroundColor: `var(${cat.color.replace('bg-[', '').replace(']', '')})`}}
+                                        style={{backgroundColor: cat.color}}
                                     ></span>
                                     <span className="text-sm">{cat.name}</span>
                                 </div>

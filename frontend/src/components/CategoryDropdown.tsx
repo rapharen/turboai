@@ -1,5 +1,4 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {getCategoryColorVar} from "@/utils/utils";
 
 export interface Category {
     name: string;
@@ -41,7 +40,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({categories, selected
                 <div className="flex items-center gap-2">
           <span
               className="w-2.5 h-2.5 rounded-full"
-              style={{backgroundColor: `var(${getCategoryColorVar(selectedCategory.color)})`}}
+              style={{backgroundColor: selectedCategory.color}}
           ></span>
                     <span className="text-sm text-[--color-foreground] font-medium">{selectedCategory.name}</span>
                 </div>
@@ -68,7 +67,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({categories, selected
                             >
                 <span
                     className="w-2.5 h-2.5 rounded-full"
-                    style={{backgroundColor: `var(${getCategoryColorVar(category.color)})`}}
+                    style={{backgroundColor: category.color}}
                 ></span>
                                 <span className="text-sm text-[--color-foreground]">{category.name}</span>
                             </li>

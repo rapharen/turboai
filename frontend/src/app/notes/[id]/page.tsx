@@ -4,12 +4,11 @@ import React, {useState, useEffect} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import CategoryDropdown from '@/components/CategoryDropdown';
 import {Note} from "@/types/note";
-import {getCategoryColorVar} from "@/utils/utils";
 
 const categories = {
-    random: {name: 'Random Thoughts', color: 'bg-[--color-cat-random]'},
-    school: {name: 'School', color: 'bg-[--color-cat-school]'},
-    personal: {name: 'Personal', color: 'bg-[--color-cat-personal]'},
+    random: {name: 'Random Thoughts', color: '#EF9C66'},
+    school: {name: 'School', color: '#FCDC94'},
+    personal: {name: 'Personal', color: '#C8CFA0'},
 };
 
 const mockNotes: Note[] = [
@@ -43,8 +42,6 @@ export default function NoteEditorPage() {
         }
     }, [noteId]);
 
-    const colorVar = getCategoryColorVar(selectedCategory.color);
-
     return (
         <main className="flex min-h-screen items-center justify-center p-8 bg-[--color-background]">
             <div className="w-full max-w-6xl relative">
@@ -66,7 +63,7 @@ export default function NoteEditorPage() {
 
                 <div
                     className="w-full min-h-[82vh] rounded-2xl shadow-lg p-8 flex flex-col border border-black/10"
-                    style={{backgroundColor: `var(${colorVar})`}}
+                    style={{backgroundColor: selectedCategory.color}}
                 >
                     <div className="flex justify-end mb-6">
                         <span className="text-[11px] text-[--color-foreground]/60">
