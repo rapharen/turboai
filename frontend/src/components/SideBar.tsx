@@ -22,12 +22,12 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
 
     return (
         <aside className="w-[213px] bg-[--color-background] flex-shrink-0">
-            <div className="pt-8 pb-6">
+            <div className="pt-6 pb-6">
                 <Link
                     href="/notes"
-                    className="block px-6 mb-6 hover:opacity-80 transition-opacity"
+                    className="block px-6 mb-4 hover:opacity-80 transition-opacity"
                 >
-                    <h2 className="text-base font-semibold text-[--color-foreground]">
+                    <h2 className={`text-base text-[--color-foreground] ${!activeCategory ? 'font-semibold' : 'font-normal'}`}>
                         All Categories
                     </h2>
                 </Link>

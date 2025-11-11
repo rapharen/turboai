@@ -1,28 +1,29 @@
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }
 
-const Button: React.FC<ButtonProps> = ({ children, className, ...props }) => {
-  return (
-    <button
-      className={`
-        bg-[--color-accent] 
+const Button: React.FC<ButtonProps> = ({children, className, ...props}) => {
+    return (
+        <button
+            className={`
+        bg-[--color-background]
         text-[--color-foreground] 
-        font-semibold 
-        py-2 px-8 
+        font-medium
+        text-sm
+        py-2 px-6
         rounded-full 
-        border border-gray-400/50 
-        hover:bg-opacity-90 
+        border border-[--color-accent]
+        hover:bg-[--color-accent]/10
         transition-colors
         ${className}
       `}
-      {...props}
-    >
-      {children}
-    </button>
-  );
+            {...props}
+        >
+            {children}
+        </button>
+    );
 };
 
 export default Button;

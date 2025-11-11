@@ -36,15 +36,15 @@ const mockNotes: Note[] = [
     {
         id: '5',
         title: 'Note Title',
-        content: 'Lately, I’ve been on a quest to discover new books to read.',
-        category: categories[1],
+        content: "Lately, I've been on a quest to discover new books to read.",
+        category: categories[2],
         date: 'June 12'
     },
     {
         id: '6',
-        title: 'A Deep and Contemplative...',
+        title: 'A Deep and Contemplative Personal Reflection on the Multifaceted and Ever-Evolving Journey of Life',
         content: 'Life has been a whirlwind of events and emotions lately.',
-        category: categories[1],
+        category: categories[0],
         date: 'June 11'
     },
     {
@@ -59,7 +59,7 @@ const mockNotes: Note[] = [
 const EmptyNotes = () => (
     <div className="flex flex-col items-center justify-center h-full text-center">
         <Image
-            src="/assets/empty-notes-boba.png" // Make sure you've placed this asset here
+            src="/assets/empty-notes-boba.png"
             alt="A cute boba tea character"
             width={200}
             height={200}
@@ -72,9 +72,9 @@ const EmptyNotes = () => (
 );
 
 const NoteGrid = ({notes}: { notes: Note[] }) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
         {notes.map(note => (
-            <Link key={note.id} href={`/notes/${note.id}`} className="cursor-pointer">
+            <Link key={note.id} href={`/notes/${note.id}`}>
                 <NoteCard note={note}/>
             </Link>
         ))}
@@ -94,19 +94,21 @@ export default function NotesPage() {
     const hasNotes = filteredNotes.length > 0;
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen bg-[--color-background]">
             <Sidebar notes={notes} categories={categories}/>
-            <main className="flex-1 p-8 relative">
-                <div className="absolute top-8 right-8">
+            <main className="flex-1 flex flex-col">
+                <div className="flex justify-end items-center py-6 px-8">
                     <Link href="/notes/new">
                         <Button>+ New Note</Button>
                     </Link>
                 </div>
-                {hasNotes ? (
-                    <NoteGrid notes={filteredNotes}/>
-                ) : (
-                    <EmptyNotes/>
-                )}
+                <div className="flex-1 px-8 py-6">
+                    {hasNotes ? (
+                        <NoteGrid notes={filteredNotes}/>
+                    ) : (
+                        <EmptyNotes/>
+                    )}
+                </div>
             </main>
         </div>
     );
