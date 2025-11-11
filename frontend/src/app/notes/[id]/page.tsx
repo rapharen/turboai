@@ -88,17 +88,6 @@ export default function NoteEditorPage() {
                         placeholder="Pour your heart out..."
                         className="flex-1 bg-transparent text-[15px] text-[--color-foreground]/90 placeholder:text-[--color-foreground]/40 focus:outline-none resize-none leading-relaxed mb-4"
                     />
-
-                    <div className="flex justify-end">
-                        <button
-                            className="w-12 h-12 bg-[--color-foreground] text-white rounded-full flex items-center justify-center shadow-md hover:bg-[--color-foreground]/90 transition-colors">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}
-                                 viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round"
-                                      d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
-                            </svg>
-                        </button>
-                    </div>
                 </div>
             </div>
         </main>
