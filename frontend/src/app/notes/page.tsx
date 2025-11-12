@@ -35,7 +35,7 @@ const NoteGrid = ({notes}: { notes: Note[] }) => (
     </div>
 );
 
-export default function NotesPage() {
+function NotesPageContent() {
     const searchParams = useSearchParams();
     const activeCategory = searchParams.get('category_id') || undefined;
 
@@ -71,4 +71,8 @@ export default function NotesPage() {
             </main>
         </div>
     );
+}
+
+export default function NotesPage() {
+    return <NotesPageContent/>;
 }

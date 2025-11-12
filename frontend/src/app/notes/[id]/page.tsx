@@ -99,7 +99,7 @@ export default function NoteDetailPage() {
 
         const timer = setTimeout(() => {
             saveNote();
-        }, 15000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, [title, content]);
