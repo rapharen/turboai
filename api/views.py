@@ -9,6 +9,14 @@ from .models import Category, Note
 from .serializers import CategorySerializer, NoteSerializer, UserSerializer
 
 
+class AllNotesView(generics.ListAPIView):
+    serializer_class = NoteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Note.objects.filter(user=self.request.user)
+
+
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
