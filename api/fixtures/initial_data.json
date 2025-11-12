@@ -1,0 +1,56 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$1f0yL9rmpYuBD9ELLbp7UK$bQeSfO1tlaagKKNHWw90n1zlhVS77IO8VXyNhLb0ia0=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "adolfo",
+      "first_name": "Adolfo",
+      "last_name": "Valdivieso",
+      "email": "adolfo.valdivieso@turboai.co",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2025-11-11T00:00:00Z",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "api.category",
+    "pk": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    "fields": {
+      "user": 1,
+      "name": "Random Thoughts",
+      "color": "#EF9C66"
+    }
+  },
+  {
+    "model": "api.category",
+    "pk": "b2c3d4e5-f6a7-8901-2345-67890abcdef1",
+    "fields": {
+      "user": 1,
+      "name": "School",
+      "color": "#FCDC94"
+    }
+  },
+  {
+    "model": "api.category",
+    "pk": "c3d4e5f6-a7b8-9012-3456-7890abcdef12",
+    "fields": {
+      "user": 1,
+      "name": "Personal",
+      "color": "#C8CFA0"
+    }
+  },
+  {
+    "model": "api.category",
+    "pk": "d4e5f6a7-b8c9-0123-4567-890abcdef123",
+    "fields": {
+      "user": 1,
+      "name": "Work",
+      "color": "#78ABA8"
+    }
+  }
+]
