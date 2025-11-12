@@ -1,20 +1,18 @@
 "use client";
 
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import CategoryDropdown from '@/components/CategoryDropdown';
 import useNotes from '@/hooks/useNotes';
 import useCategories from '@/hooks/useCategories';
 import {Category} from '@/types/category';
-import {useDebounce} from '@/hooks/useDebounce';
 import {formatDetailedDate} from '@/utils/date';
 import ReactMarkdown from 'react-markdown';
 
 export default function NoteDetailPage() {
     const params = useParams();
     const router = useRouter();
-    const noteId = Array.isArray(params.id) ? params.id[0] : params.id;
-    const isNewNote = noteId === 'new';
+    const noteIdFromUrl = Array.isArray(params.id) ? params.id[0] : params.id;
 
     const {getNoteById, createNote, updateNote} = useNotes();
     const {categories, loading: loadingCategories} = useCategories();
@@ -23,15 +21,14 @@ export default function NoteDetailPage() {
     const [content, setContent] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
-    const [loading, setLoading] = useState(!isNewNote);
+    const [loading, setLoading] = useState(noteIdFromUrl !== 'new');
     const [isSaving, setIsSaving] = useState(false);
 
-    const debouncedTitle = useDebounce(title, 500);
-    const debouncedContent = useDebounce(content, 500);
+    const noteIdRef = useRef(noteIdFromUrl);
 
     useEffect(() => {
-        if (!isNewNote && noteId) {
-            getNoteById(noteId)
+        if (noteIdFromUrl && noteIdFromUrl !== 'new') {
+            getNoteById(noteIdFromUrl)
                 .then(note => {
                     setTitle(note.title);
                     setContent(note.content);
@@ -41,25 +38,41 @@ export default function NoteDetailPage() {
                 })
                 .catch(() => setLoading(false));
         }
-    }, [noteId, isNewNote, getNoteById]);
+    }, [noteIdFromUrl, getNoteById]);
 
     useEffect(() => {
-        if (isNewNote && categories.length > 0 && !selectedCategory) {
+        if (noteIdFromUrl === 'new' && categories.length > 0 && !selectedCategory) {
             setSelectedCategory(categories[0]);
         }
-    }, [isNewNote, categories, selectedCategory]);
+    }, [noteIdFromUrl, categories, selectedCategory]);
 
-    const performSave = useCallback(async () => {
-        if (isNewNote || !noteId || !selectedCategory) return;
+    const performSave = useCallback(async (isClosing = false) => {
+        if (!selectedCategory || isSaving) return;
+
+        if (noteIdRef.current === 'new' && !title && !content && !isClosing) {
+            return;
+        }
+
         setIsSaving(true);
         const noteData = {title, content, category_id: selectedCategory.id};
-        const updatedNote = await updateNote(noteId, noteData);
-        setLastUpdated(updatedNote.last_updated);
-        setIsSaving(false);
-    }, [noteId, title, content, selectedCategory, isNewNote, updateNote]);
+
+        try {
+            if (noteIdRef.current === 'new') {
+                const newNote = await createNote(noteData);
+                noteIdRef.current = newNote.id;
+                setLastUpdated(newNote.last_updated);
+                router.replace(`/notes/${newNote.id}`, {scroll: false});
+            } else if (noteIdRef.current) {
+                const updatedNote = await updateNote(noteIdRef.current, noteData);
+                setLastUpdated(updatedNote.last_updated);
+            }
+        } finally {
+            setIsSaving(false);
+        }
+    }, [title, content, selectedCategory, createNote, updateNote, router, isSaving]);
 
     useEffect(() => {
-        if (isNewNote || loading) return;
+        if (loading) return;
         const handler = setTimeout(() => {
             performSave();
         }, 1500);
@@ -67,20 +80,23 @@ export default function NoteDetailPage() {
         return () => {
             clearTimeout(handler);
         };
-    }, [title, content, performSave, isNewNote, loading]);
+    }, [title, content, performSave, loading]);
 
     const handleCategoryChange = async (category: Category) => {
         setSelectedCategory(category);
-        if (!isNewNote && noteId) {
+        if (noteIdRef.current && noteIdRef.current !== 'new') {
             setIsSaving(true);
-            const updatedNote = await updateNote(noteId, {category_id: category.id});
-            setLastUpdated(updatedNote.last_updated);
-            setIsSaving(false);
+            try {
+                const updatedNote = await updateNote(noteIdRef.current, {category_id: category.id});
+                setLastUpdated(updatedNote.last_updated);
+            } finally {
+                setIsSaving(false);
+            }
         }
     };
 
     const handleClose = async () => {
-        await performSave();
+        await performSave(true);
         router.push('/');
     };
 
