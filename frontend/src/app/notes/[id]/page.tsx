@@ -22,39 +22,36 @@ export default function NoteDetailPage() {
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
     const [loading, setLoading] = useState(noteIdFromUrl !== 'new');
     const [isSaving, setIsSaving] = useState(false);
-    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-    const noteIdRef = useRef(noteIdFromUrl);
-    const titleRef = useRef(title);
-    const contentRef = useRef(content);
-    const categoryRef = useRef(selectedCategory);
+    const currentNoteIdRef = useRef(noteIdFromUrl);
 
-    useEffect(() => {
-        titleRef.current = title;
-    }, [title]);
-    useEffect(() => {
-        contentRef.current = content;
-    }, [content]);
-    useEffect(() => {
-        categoryRef.current = selectedCategory;
-    }, [selectedCategory]);
+    const isInitialLoadRef = useRef(true);
 
     useEffect(() => {
         if (noteIdFromUrl && noteIdFromUrl !== 'new') {
+            setLoading(true);
             getNoteById(noteIdFromUrl)
                 .then(note => {
                     setTitle(note.title);
                     setContent(note.content);
                     setSelectedCategory(note.category);
                     setLastUpdated(note.last_updated);
+                    currentNoteIdRef.current = note.id;
+                })
+                .catch(err => {
+                    console.error('Error loading note:', err);
+                    router.push('/');
                 })
                 .finally(() => {
-                    setIsInitialLoad(false);
+                    setLoading(false);
+                    setTimeout(() => {
+                        isInitialLoadRef.current = false;
+                    }, 500);
                 });
         } else {
-            setIsInitialLoad(false);
+            isInitialLoadRef.current = false;
         }
-    }, [noteIdFromUrl, getNoteById]);
+    }, [noteIdFromUrl]);
 
     useEffect(() => {
         if (noteIdFromUrl === 'new' && categories.length > 0 && !selectedCategory) {
@@ -62,82 +59,103 @@ export default function NoteDetailPage() {
         }
     }, [noteIdFromUrl, categories, selectedCategory]);
 
-    const performSave = useCallback(async (isClosing = false) => {
-        if (isSaving) return;
+    const saveNote = useCallback(async () => {
+        if (isSaving || isInitialLoadRef.current) return;
 
-        const currentCategory = categoryRef.current;
-        if (!currentCategory) return;
+        if (!selectedCategory) return;
 
-        const currentTitle = titleRef.current;
-        const currentContent = contentRef.current;
-
-        if (noteIdRef.current === 'new' && !currentTitle && !currentContent && !isClosing) {
+        if (currentNoteIdRef.current === 'new' && !title.trim() && !content.trim()) {
             return;
         }
 
         setIsSaving(true);
-        const noteData = {title: currentTitle, content: currentContent, category_id: currentCategory.id};
+        const noteData = {
+            title: title.trim(),
+            content: content.trim(),
+            category_id: selectedCategory.id
+        };
 
         try {
-            if (noteIdRef.current === 'new') {
+            if (currentNoteIdRef.current === 'new') {
                 const newNote = await createNote(noteData);
-                noteIdRef.current = newNote.id;
+                currentNoteIdRef.current = newNote.id;
                 setLastUpdated(newNote.last_updated);
-                router.replace(`/notes/${newNote.id}`, {scroll: false});
-            } else if (noteIdRef.current) {
-                const updatedNote = await updateNote(noteIdRef.current, noteData);
+                window.history.replaceState(null, '', `/notes/${newNote.id}`);
+            } else if (currentNoteIdRef.current) {
+                const updatedNote = await updateNote(currentNoteIdRef.current, noteData);
                 setLastUpdated(updatedNote.last_updated);
             }
+        } catch (err) {
+            console.error('Error saving note:', err);
         } finally {
             setIsSaving(false);
         }
-    }, [createNote, updateNote, router, isSaving]);
+    }, [title, content, selectedCategory, createNote, updateNote, isSaving]);
 
     useEffect(() => {
-        if (isInitialLoad) return;
-        const handler = setTimeout(() => {
-            performSave();
-        }, 1500);
+        if (isInitialLoadRef.current) return;
 
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [title, content, performSave, isInitialLoad]);
+        if (!title.trim() && !content.trim()) return;
 
-    const handleCategoryChange = async (category: Category) => {
+        const timer = setTimeout(() => {
+            saveNote();
+        }, 15000);
+
+        return () => clearTimeout(timer);
+    }, [title, content]);
+
+    const handleCategoryChange = useCallback(async (category: Category) => {
         setSelectedCategory(category);
-        if (noteIdRef.current && noteIdRef.current !== 'new') {
+
+        if (currentNoteIdRef.current && currentNoteIdRef.current !== 'new') {
             setIsSaving(true);
             try {
-                const updatedNote = await updateNote(noteIdRef.current, {category_id: category.id});
+                const updatedNote = await updateNote(currentNoteIdRef.current, {
+                    category_id: category.id
+                });
                 setLastUpdated(updatedNote.last_updated);
+            } catch (err) {
+                console.error('Error updating category:', err);
             } finally {
                 setIsSaving(false);
             }
         }
-    };
+    }, []);
 
-    const handleClose = async () => {
-        await performSave(true);
+    const handleClose = useCallback(async () => {
+        await saveNote();
         router.push('/');
-    };
+    }, [saveNote, router]);
 
-    if (loading || loadingCategories) return <div>Loading...</div>;
+    if (loading || loadingCategories) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-[--color-background]">
+                <div className="text-[--color-foreground]">Loading...</div>
+            </div>
+        );
+    }
+
+    if (!selectedCategory) {
+        return (
+            <div className="flex min-h-screen items-center justify-center bg-[--color-background]">
+                <div className="text-[--color-foreground]">Loading categories...</div>
+            </div>
+        );
+    }
 
     return (
         <main className="flex min-h-screen items-center justify-center p-8 bg-[--color-background]">
             <div className="w-full max-w-6xl relative">
                 <div className="flex justify-between items-center mb-3 px-2">
-                    {selectedCategory && (
-                        <CategoryDropdown
-                            categories={categories}
-                            selectedCategory={selectedCategory}
-                            onSelectCategory={handleCategoryChange}
-                        />
-                    )}
+                    <CategoryDropdown
+                        categories={categories}
+                        selectedCategory={selectedCategory}
+                        onSelectCategory={handleCategoryChange}
+                    />
                     <button
                         onClick={handleClose}
-                        className="text-[--color-foreground]/60 hover:text-[--color-foreground] transition-colors"
+                        disabled={isSaving}
+                        className="text-[--color-foreground]/60 hover:text-[--color-foreground] transition-colors disabled:opacity-50"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -147,32 +165,36 @@ export default function NoteDetailPage() {
 
                 <div
                     className="w-full min-h-[82vh] rounded-2xl shadow-lg p-8 flex flex-col border border-black/10"
-                    style={{backgroundColor: selectedCategory?.color || '#FFFFFF'}}
+                    style={{backgroundColor: selectedCategory.color}}
                 >
-                    <div className="flex justify-end mb-6">
+                    <div className="flex justify-between items-center mb-6">
+                        {isSaving && (
+                            <span className="text-[11px] text-[--color-foreground]/60">
+                                Saving...
+                            </span>
+                        )}
+                        <div className="flex-1"></div>
                         {lastUpdated && (
                             <span className="text-[11px] text-[--color-foreground]/60">
                                 Last Edited: {formatDetailedDate(lastUpdated)}
                             </span>
                         )}
                     </div>
-
                     <input
                         type="text"
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Note Title"
-                        className="bg-transparent text-3xl font-semibold text-[--color-foreground] placeholder:text-[--color-foreground]/50 focus:outline-none mb-6"
+                        className="bg-transparent text-[28px] font-bold text-[--color-foreground] placeholder:text-[--color-foreground]/40 focus:outline-none mb-4"
+                        disabled={isSaving}
                     />
                     <textarea
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
-                        placeholder="Start writing..."
-                        className="bg-transparent text-lg text-[--color-foreground] placeholder:text-[--color-foreground]/70 focus:outline-none flex-1 resize-none"
+                        placeholder="Pour your heart out..."
+                        className="flex-1 bg-transparent text-[15px] text-[--color-foreground]/90 placeholder:text-[--color-foreground]/40 focus:outline-none resize-none leading-relaxed mb-4"
+                        disabled={isSaving}
                     />
-                    <div className="flex justify-end mt-6">
-                        {isSaving && <span className="text-sm text-[--color-foreground]/70">Saving...</span>}
-                    </div>
                 </div>
             </div>
         </main>
