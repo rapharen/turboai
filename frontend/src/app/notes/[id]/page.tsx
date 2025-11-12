@@ -25,6 +25,19 @@ export default function NoteDetailPage() {
     const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const noteIdRef = useRef(noteIdFromUrl);
+    const titleRef = useRef(title);
+    const contentRef = useRef(content);
+    const categoryRef = useRef(selectedCategory);
+
+    useEffect(() => {
+        titleRef.current = title;
+    }, [title]);
+    useEffect(() => {
+        contentRef.current = content;
+    }, [content]);
+    useEffect(() => {
+        categoryRef.current = selectedCategory;
+    }, [selectedCategory]);
 
     useEffect(() => {
         if (noteIdFromUrl && noteIdFromUrl !== 'new') {
@@ -36,7 +49,6 @@ export default function NoteDetailPage() {
                     setLastUpdated(note.last_updated);
                 })
                 .finally(() => {
-                    setLoading(false);
                     setIsInitialLoad(false);
                 });
         } else {
@@ -51,11 +63,13 @@ export default function NoteDetailPage() {
     }, [noteIdFromUrl, categories, selectedCategory]);
 
     const performSave = useCallback(async (isClosing = false) => {
-        const currentTitle = title;
-        const currentContent = content;
-        const currentCategory = selectedCategory;
+        if (isSaving) return;
 
-        if (!currentCategory || isSaving) return;
+        const currentCategory = categoryRef.current;
+        if (!currentCategory) return;
+
+        const currentTitle = titleRef.current;
+        const currentContent = contentRef.current;
 
         if (noteIdRef.current === 'new' && !currentTitle && !currentContent && !isClosing) {
             return;
@@ -77,7 +91,7 @@ export default function NoteDetailPage() {
         } finally {
             setIsSaving(false);
         }
-    }, []);
+    }, [createNote, updateNote, router, isSaving]);
 
     useEffect(() => {
         if (isInitialLoad) return;
@@ -88,7 +102,7 @@ export default function NoteDetailPage() {
         return () => {
             clearTimeout(handler);
         };
-    }, [performSave, isInitialLoad]);
+    }, [title, content, performSave, isInitialLoad]);
 
     const handleCategoryChange = async (category: Category) => {
         setSelectedCategory(category);
