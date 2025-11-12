@@ -8,6 +8,7 @@
   --accent-20: #5D544A33; /* ~20% */
   --accent-30: #5D544A4D; /* ~30% */
   --link: #9F9282;       /* "We're already friends" link */
+  --text: #88642A;
 
   /* Provide default font variables so Tailwind can resolve them at build time.
      next/font will override these via className on <body>. */
@@ -28,6 +29,7 @@
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
   --color-link: var(--link);
+  --color-text: var(--text);
   
   --color-cat-random: var(--cat-random);
   --color-cat-school: var(--cat-school);

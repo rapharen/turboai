@@ -65,7 +65,7 @@ const EmptyNotes = () => (
             height={200}
             priority
         />
-        <p className="mt-6 text-lg text-[--color-link]">
+        <p className="mt-6 text-lg text-[var(--color-text)]">
             I'm just here waiting for your Charming notes...
         </p>
     </div>
