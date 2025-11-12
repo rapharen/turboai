@@ -22,6 +22,7 @@ export default function NoteDetailPage() {
     const [lastUpdated, setLastUpdated] = useState<string | null>(null);
     const [loading, setLoading] = useState(noteIdFromUrl !== 'new');
     const [isSaving, setIsSaving] = useState(false);
+    const [isInitialLoad, setIsInitialLoad] = useState(true);
 
     const noteIdRef = useRef(noteIdFromUrl);
 
@@ -33,9 +34,13 @@ export default function NoteDetailPage() {
                     setContent(note.content);
                     setSelectedCategory(note.category);
                     setLastUpdated(note.last_updated);
-                    setLoading(false);
                 })
-                .catch(() => setLoading(false));
+                .finally(() => {
+                    setLoading(false);
+                    setIsInitialLoad(false);
+                });
+        } else {
+            setIsInitialLoad(false);
         }
     }, [noteIdFromUrl, getNoteById]);
 
@@ -46,14 +51,18 @@ export default function NoteDetailPage() {
     }, [noteIdFromUrl, categories, selectedCategory]);
 
     const performSave = useCallback(async (isClosing = false) => {
-        if (!selectedCategory || isSaving) return;
+        const currentTitle = title;
+        const currentContent = content;
+        const currentCategory = selectedCategory;
 
-        if (noteIdRef.current === 'new' && !title && !content && !isClosing) {
+        if (!currentCategory || isSaving) return;
+
+        if (noteIdRef.current === 'new' && !currentTitle && !currentContent && !isClosing) {
             return;
         }
 
         setIsSaving(true);
-        const noteData = {title, content, category_id: selectedCategory.id};
+        const noteData = {title: currentTitle, content: currentContent, category_id: currentCategory.id};
 
         try {
             if (noteIdRef.current === 'new') {
@@ -68,10 +77,10 @@ export default function NoteDetailPage() {
         } finally {
             setIsSaving(false);
         }
-    }, [title, content, selectedCategory, createNote, updateNote, router, isSaving]);
+    }, []);
 
     useEffect(() => {
-        if (loading) return;
+        if (isInitialLoad) return;
         const handler = setTimeout(() => {
             performSave();
         }, 1500);
@@ -79,7 +88,7 @@ export default function NoteDetailPage() {
         return () => {
             clearTimeout(handler);
         };
-    }, [title, content, performSave, loading]);
+    }, [performSave, isInitialLoad]);
 
     const handleCategoryChange = async (category: Category) => {
         setSelectedCategory(category);
