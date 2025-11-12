@@ -3,58 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {useSearchParams} from 'next/navigation';
-import {useState, useMemo} from 'react';
 import Button from '@/components/Button';
 import NoteCard from '@/components/NoteCard';
 import Sidebar from "@/components/SideBar";
-import {Category} from "@/types/category";
+import useCategories from '@/hooks/useCategories';
+import useNotes from '@/hooks/useNotes';
 import {Note} from "@/types/note";
-
-const categories: Category[] = [
-    {name: 'Random Thoughts', color: '#EF9C66'},
-    {name: 'School', color: '#FCDC94'},
-    {name: 'Personal', color: '#C8CFA0'},
-];
-
-const mockNotes: Note[] = [
-    {id: '1', title: 'Grocery List', content: '• Milk\n• Eggs\n• Bread', category: categories[0], date: 'today'},
-    {
-        id: '2',
-        title: 'Meeting with Team',
-        content: 'Discuss project timeline and milestones. Review budget and resource allocation.',
-        category: categories[1],
-        date: 'yesterday'
-    },
-    {id: '3', title: 'Note Title', content: 'Note content...', category: categories[1], date: 'July 16'},
-    {
-        id: '4',
-        title: 'Vacation ideas',
-        content: '• Visit Bali for beaches and culture\n• Explore the historic sites in Rome',
-        category: categories[0],
-        date: 'July 15'
-    },
-    {
-        id: '5',
-        title: 'Note Title',
-        content: "Lately, I've been on a quest to discover new books to read.",
-        category: categories[2],
-        date: 'June 12'
-    },
-    {
-        id: '6',
-        title: 'A Deep and Contemplative Personal Reflection on the Multifaceted and Ever-Evolving Journey of Life',
-        content: 'Life has been a whirlwind of events and emotions lately.',
-        category: categories[0],
-        date: 'June 11'
-    },
-    {
-        id: '7',
-        title: 'Project X Updates',
-        content: 'Finalized design mockups and received approval from stakeholders.',
-        category: categories[1],
-        date: 'June 10'
-    },
-];
 
 const EmptyNotes = () => (
     <div className="flex flex-col items-center justify-center h-full text-center">
@@ -82,16 +36,21 @@ const NoteGrid = ({notes}: { notes: Note[] }) => (
 );
 
 export default function NotesPage() {
-    const [notes] = useState(mockNotes);
     const searchParams = useSearchParams();
-    const activeCategory = searchParams.get('category');
+    const activeCategory = searchParams.get('category') || undefined;
 
-    const filteredNotes = useMemo(() => {
-        if (!activeCategory) return notes;
-        return notes.filter(note => note.category.name === activeCategory);
-    }, [notes, activeCategory]);
+    const {categories, loading: loadingCategories, error: errorCategories} = useCategories();
+    const {notes, loading: loadingNotes, error: errorNotes} = useNotes(activeCategory);
 
-    const hasNotes = filteredNotes.length > 0;
+    const hasNotes = notes.length > 0;
+
+    if (loadingCategories || loadingNotes) {
+        return <div>Loading...</div>;
+    }
+
+    if (errorCategories || errorNotes) {
+        return <div>Error loading data. Please try again.</div>;
+    }
 
     return (
         <div className="flex min-h-screen bg-[--color-background]">
@@ -104,7 +63,7 @@ export default function NotesPage() {
                 </div>
                 <div className="flex-1 px-8 py-6">
                     {hasNotes ? (
-                        <NoteGrid notes={filteredNotes}/>
+                        <NoteGrid notes={notes}/>
                     ) : (
                         <EmptyNotes/>
                     )}

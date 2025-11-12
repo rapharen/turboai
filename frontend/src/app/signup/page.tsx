@@ -1,8 +1,30 @@
+"use client";
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
+import useAuthApi from '@/hooks/useAuthApi';
 
 export default function SignUpPage() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { registerUser } = useAuthApi();
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    try {
+      await registerUser(username, password);
+      router.push('/');
+    } catch (err) {
+      setError('Failed to register. Please try again.');
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-6 text-center w-full max-w-xs">
@@ -21,10 +43,23 @@ export default function SignUpPage() {
           Yay, New Friend!
         </h1>
 
-        <form className="mt-4 flex w-full flex-col gap-4">
-          <Input type="email" placeholder="Email address" required />
-          <Input type="password" placeholder="Password" required />
+        <form onSubmit={handleSubmit} className="mt-4 flex w-full flex-col gap-4">
+          <Input 
+            type="text" 
+            placeholder="Username" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+            required 
+          />
+          <Input 
+            type="password" 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+          />
           <Button type="submit" className="w-full">Sign Up</Button>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </form>
 
         <a href="/" className="text-sm text-[--color-link] underline mt-2">
