@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import CategoryDropdown from '@/components/CategoryDropdown';
 import useNotes from '@/hooks/useNotes';
@@ -49,23 +49,25 @@ export default function NoteDetailPage() {
         }
     }, [isNewNote, categories, selectedCategory]);
 
-    useEffect(() => {
-        if (isNewNote || !noteId) return;
+    const performSave = useCallback(async () => {
+        if (isNewNote || !noteId || !selectedCategory) return;
+        setIsSaving(true);
+        const noteData = {title, content, category_id: selectedCategory.id};
+        const updatedNote = await updateNote(noteId, noteData);
+        setLastUpdated(updatedNote.last_updated);
+        setIsSaving(false);
+    }, [noteId, title, content, selectedCategory, isNewNote, updateNote]);
 
-        const handleAutosave = async () => {
-            if (!selectedCategory) return;
-            setIsSaving(true);
-            const noteData = {
-                title: debouncedTitle,
-                content: debouncedContent,
-                category_id: selectedCategory.id,
-            };
-            const updatedNote = await updateNote(noteId, noteData);
-            setLastUpdated(updatedNote.last_updated);
-            setIsSaving(false);
+    useEffect(() => {
+        if (isNewNote || loading) return;
+        const handler = setTimeout(() => {
+            performSave();
+        }, 1500);
+
+        return () => {
+            clearTimeout(handler);
         };
-        handleAutosave();
-    }, [debouncedTitle, debouncedContent, selectedCategory, noteId, isNewNote, updateNote]);
+    }, [title, content, performSave, isNewNote, loading]);
 
     const handleCategoryChange = async (category: Category) => {
         setSelectedCategory(category);
@@ -75,6 +77,11 @@ export default function NoteDetailPage() {
             setLastUpdated(updatedNote.last_updated);
             setIsSaving(false);
         }
+    };
+
+    const handleClose = async () => {
+        await performSave();
+        router.push('/');
     };
 
     if (loading || loadingCategories) return <div>Loading...</div>;
@@ -91,7 +98,7 @@ export default function NoteDetailPage() {
                         />
                     )}
                     <button
-                        onClick={() => router.push('/')}
+                        onClick={handleClose}
                         className="text-[--color-foreground]/60 hover:text-[--color-foreground] transition-colors"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
