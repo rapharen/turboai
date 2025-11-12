@@ -7,7 +7,6 @@ import useNotes from '@/hooks/useNotes';
 import useCategories from '@/hooks/useCategories';
 import {Category} from '@/types/category';
 import {formatDetailedDate} from '@/utils/date';
-import ReactMarkdown from 'react-markdown';
 
 export default function NoteDetailPage() {
     const params = useParams();
@@ -142,17 +141,12 @@ export default function NoteDetailPage() {
                         placeholder="Note Title"
                         className="bg-transparent text-3xl font-semibold text-[--color-foreground] placeholder:text-[--color-foreground]/50 focus:outline-none mb-6"
                     />
-                    <div className="flex-1 grid grid-cols-2 gap-8">
-                        <textarea
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                            placeholder="Start writing in Markdown..."
-                            className="bg-transparent text-lg text-[--color-foreground] placeholder:text-[--color-foreground]/70 focus:outline-none resize-none"
-                        />
-                        <div className="prose prose-lg max-w-none text-[--color-foreground]">
-                            <ReactMarkdown>{content}</ReactMarkdown>
-                        </div>
-                    </div>
+                    <textarea
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Start writing..."
+                        className="bg-transparent text-lg text-[--color-foreground] placeholder:text-[--color-foreground]/70 focus:outline-none flex-1 resize-none"
+                    />
                     <div className="flex justify-end mt-6">
                         {isSaving && <span className="text-sm text-[--color-foreground]/70">Saving...</span>}
                     </div>
