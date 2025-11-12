@@ -29,12 +29,12 @@ export const formatRelativeDate = (dateString: string): string => {
 
 export const formatDetailedDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
+    return new Intl.DateTimeFormat('en-US', {
         month: 'long',
         day: 'numeric',
         year: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
         hour12: true,
-    });
+    }).format(date);
 };

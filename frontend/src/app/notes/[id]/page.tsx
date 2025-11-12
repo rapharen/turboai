@@ -1,11 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, {useState, useEffect} from 'react';
+import {useParams, useRouter} from 'next/navigation';
 import CategoryDropdown from '@/components/CategoryDropdown';
 import useNotes from '@/hooks/useNotes';
 import useCategories from '@/hooks/useCategories';
-import { Category } from '@/types/category';
+import {Category} from '@/types/category';
+import {useDebounce} from '@/hooks/useDebounce';
+import {formatDetailedDate} from '@/utils/date';
+import ReactMarkdown from 'react-markdown';
 
 export default function NoteDetailPage() {
     const params = useParams();
@@ -13,13 +16,18 @@ export default function NoteDetailPage() {
     const noteId = Array.isArray(params.id) ? params.id[0] : params.id;
     const isNewNote = noteId === 'new';
 
-    const { getNoteById, createNote, updateNote } = useNotes();
-    const { categories, loading: loadingCategories } = useCategories();
+    const {getNoteById, createNote, updateNote} = useNotes();
+    const {categories, loading: loadingCategories} = useCategories();
 
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    const [lastUpdated, setLastUpdated] = useState<string | null>(null);
     const [loading, setLoading] = useState(!isNewNote);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const debouncedTitle = useDebounce(title, 500);
+    const debouncedContent = useDebounce(content, 500);
 
     useEffect(() => {
         if (!isNewNote && noteId) {
@@ -28,6 +36,7 @@ export default function NoteDetailPage() {
                     setTitle(note.title);
                     setContent(note.content);
                     setSelectedCategory(note.category);
+                    setLastUpdated(note.last_updated);
                     setLoading(false);
                 })
                 .catch(() => setLoading(false));
@@ -40,21 +49,32 @@ export default function NoteDetailPage() {
         }
     }, [isNewNote, categories, selectedCategory]);
 
-    const handleSave = async () => {
-        if (!selectedCategory) return;
+    useEffect(() => {
+        if (isNewNote || !noteId) return;
 
-        const noteData = {
-            title,
-            content,
-            category_id: selectedCategory.id,
+        const handleAutosave = async () => {
+            if (!selectedCategory) return;
+            setIsSaving(true);
+            const noteData = {
+                title: debouncedTitle,
+                content: debouncedContent,
+                category_id: selectedCategory.id,
+            };
+            const updatedNote = await updateNote(noteId, noteData);
+            setLastUpdated(updatedNote.last_updated);
+            setIsSaving(false);
         };
+        handleAutosave();
+    }, [debouncedTitle, debouncedContent, selectedCategory, noteId, isNewNote, updateNote]);
 
-        if (isNewNote) {
-            await createNote(noteData);
-        } else if (noteId) {
-            await updateNote(noteId, noteData);
+    const handleCategoryChange = async (category: Category) => {
+        setSelectedCategory(category);
+        if (!isNewNote && noteId) {
+            setIsSaving(true);
+            const updatedNote = await updateNote(noteId, {category_id: category.id});
+            setLastUpdated(updatedNote.last_updated);
+            setIsSaving(false);
         }
-        router.push('/');
     };
 
     if (loading || loadingCategories) return <div>Loading...</div>;
@@ -67,7 +87,7 @@ export default function NoteDetailPage() {
                         <CategoryDropdown
                             categories={categories}
                             selectedCategory={selectedCategory}
-                            onSelectCategory={setSelectedCategory}
+                            onSelectCategory={handleCategoryChange}
                         />
                     )}
                     <button
@@ -82,8 +102,16 @@ export default function NoteDetailPage() {
 
                 <div
                     className="w-full min-h-[82vh] rounded-2xl shadow-lg p-8 flex flex-col border border-black/10"
-                    style={{ backgroundColor: selectedCategory?.color || '#FFFFFF' }}
+                    style={{backgroundColor: selectedCategory?.color || '#FFFFFF'}}
                 >
+                    <div className="flex justify-end mb-6">
+                        {lastUpdated && (
+                            <span className="text-[11px] text-[--color-foreground]/60">
+                                Last Edited: {formatDetailedDate(lastUpdated)}
+                            </span>
+                        )}
+                    </div>
+
                     <input
                         type="text"
                         value={title}
@@ -91,16 +119,19 @@ export default function NoteDetailPage() {
                         placeholder="Note Title"
                         className="bg-transparent text-3xl font-semibold text-[--color-foreground] placeholder:text-[--color-foreground]/50 focus:outline-none mb-6"
                     />
-                    <textarea
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        placeholder="Start writing..."
-                        className="bg-transparent text-lg text-[--color-foreground] placeholder:text-[--color-foreground]/70 focus:outline-none flex-1 resize-none"
-                    />
+                    <div className="flex-1 grid grid-cols-2 gap-8">
+                        <textarea
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            placeholder="Start writing in Markdown..."
+                            className="bg-transparent text-lg text-[--color-foreground] placeholder:text-[--color-foreground]/70 focus:outline-none resize-none"
+                        />
+                        <div className="prose prose-lg max-w-none text-[--color-foreground]">
+                            <ReactMarkdown>{content}</ReactMarkdown>
+                        </div>
+                    </div>
                     <div className="flex justify-end mt-6">
-                        <button onClick={handleSave} className="bg-[--color-foreground] text-white py-2 px-6 rounded-full font-medium">
-                            Save
-                        </button>
+                        {isSaving && <span className="text-sm text-[--color-foreground]/70">Saving...</span>}
                     </div>
                 </div>
             </div>
