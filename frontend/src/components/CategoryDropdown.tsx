@@ -1,9 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-
-export interface Category {
-    name: string;
-    color: string;
-}
+import {Category} from '@/types/category';
 
 interface CategoryDropdownProps {
     categories: Category[];
@@ -61,7 +57,7 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({categories, selected
                     <ul className="py-1">
                         {categories.map(category => (
                             <li
-                                key={category.name}
+                                key={category.id}
                                 onClick={() => handleSelect(category)}
                                 className="flex items-center gap-2 px-3 py-2 hover:bg-[--color-background] cursor-pointer transition-colors"
                             >
