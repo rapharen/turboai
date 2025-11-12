@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import useApi from './useApi';
 import { Note } from '@/types/note';
 
-const useNotes = (categoryName?: string) => {
+const useNotes = (categoryId?: string) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -11,7 +11,7 @@ const useNotes = (categoryName?: string) => {
   const fetchNotes = useCallback(async () => {
     try {
       setLoading(true);
-      const endpoint = categoryName ? `/notes/?category=${categoryName}` : '/notes/';
+      const endpoint = categoryId ? `/categories/${categoryId}/notes/` : '/notes/';
       const data = await api(endpoint);
       setNotes(data);
     } catch (err) {
@@ -19,7 +19,7 @@ const useNotes = (categoryName?: string) => {
     } finally {
       setLoading(false);
     }
-  }, [api, categoryName]);
+  }, [api, categoryId]);
 
   useEffect(() => {
     fetchNotes();

@@ -2,13 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import {useSearchParams} from 'next/navigation';
 import Button from '@/components/Button';
 import NoteCard from '@/components/NoteCard';
 import Sidebar from "@/components/SideBar";
 import useCategories from '@/hooks/useCategories';
 import useNotes from '@/hooks/useNotes';
-import { Note } from "@/types/note";
+import {Note} from "@/types/note";
 import PrivateRoute from '@/components/PrivateRoute';
 
 const EmptyNotes = () => (
@@ -26,11 +26,11 @@ const EmptyNotes = () => (
     </div>
 );
 
-const NoteGrid = ({ notes }: { notes: Note[] }) => (
+const NoteGrid = ({notes}: { notes: Note[] }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
         {notes.map(note => (
             <Link key={note.id} href={`/notes/${note.id}`}>
-                <NoteCard note={note} />
+                <NoteCard note={note}/>
             </Link>
         ))}
     </div>
@@ -38,10 +38,10 @@ const NoteGrid = ({ notes }: { notes: Note[] }) => (
 
 function NotesPageContent() {
     const searchParams = useSearchParams();
-    const activeCategory = searchParams.get('category') || undefined;
+    const activeCategoryId = searchParams.get('category_id') || undefined;
 
-    const { categories, loading: loadingCategories, error: errorCategories } = useCategories();
-    const { notes, loading: loadingNotes, error: errorNotes } = useNotes(activeCategory);
+    const {categories, loading: loadingCategories, error: errorCategories} = useCategories();
+    const {notes, loading: loadingNotes, error: errorNotes} = useNotes(activeCategoryId);
 
     const hasNotes = notes.length > 0;
 
@@ -55,7 +55,7 @@ function NotesPageContent() {
 
     return (
         <div className="flex min-h-screen bg-[--color-background]">
-            <Sidebar notes={notes} categories={categories} />
+            <Sidebar notes={notes} categories={categories}/>
             <main className="flex-1 flex flex-col">
                 <div className="flex justify-end items-center py-6 px-8">
                     <Link href="/notes/new">
@@ -64,9 +64,9 @@ function NotesPageContent() {
                 </div>
                 <div className="flex-1 px-8 py-6">
                     {hasNotes ? (
-                        <NoteGrid notes={notes} />
+                        <NoteGrid notes={notes}/>
                     ) : (
-                        <EmptyNotes />
+                        <EmptyNotes/>
                     )}
                 </div>
             </main>
@@ -77,7 +77,7 @@ function NotesPageContent() {
 export default function HomePage() {
     return (
         <PrivateRoute>
-            <NotesPageContent />
+            <NotesPageContent/>
         </PrivateRoute>
     );
 }

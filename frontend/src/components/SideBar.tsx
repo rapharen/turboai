@@ -11,11 +11,11 @@ interface SidebarProps {
 
 const Sidebar = ({notes, categories}: SidebarProps) => {
     const searchParams = useSearchParams();
-    const activeCategory = searchParams.get('category');
+    const activeCategory = searchParams.get('category_id');
 
     const categoryCounts = useMemo(() => {
         return notes.reduce((acc, note) => {
-            acc[note.category.name] = (acc[note.category.name] || 0) + 1;
+            acc[note.category.id] = (acc[note.category.id] || 0) + 1;
             return acc;
         }, {} as Record<string, number>);
     }, [notes]);
@@ -33,19 +33,19 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
                 </Link>
                 <ul className="space-y-1 px-4">
                     {categories.map(cat => (
-                        <li key={cat.name}>
+                        <li key={cat.id}>
                             <Link
-                                href={`/notes?category=${cat.name}`}
+                                href={`/notes?category_id=${cat.id}`}
                                 className={`
                                     flex items-center justify-between 
                                     py-2 px-2 rounded-lg 
                                     transition-colors
-                                    ${activeCategory === cat.name
+                                    ${activeCategory === cat.id
                                     ? 'text-[--color-foreground] font-medium'
                                     : 'text-[--color-foreground]/70 hover:bg-[--color-accent]/10'
                                 }
                                 `}
-                                style={activeCategory === cat.name ? {backgroundColor: 'var(--color-accent)'} : undefined}
+                                style={activeCategory === cat.id ? {backgroundColor: 'var(--color-accent)'} : undefined}
                             >
                                 <div className="flex items-center gap-2">
                                     <span
@@ -55,7 +55,7 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
                                     <span className="text-sm">{cat.name}</span>
                                 </div>
                                 <span className="text-xs font-bold text-[--color-foreground]/50">
-                                    {categoryCounts[cat.name] || 0}
+                                    {categoryCounts[cat.id] || 0}
                                 </span>
                             </Link>
                         </li>

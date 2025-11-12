@@ -45,11 +45,10 @@ class NoteViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        queryset = Note.objects.filter(user=self.request.user)
-        category_name = self.request.query_params.get('category')
-        if category_name:
-            queryset = queryset.filter(category__name=category_name)
-        return queryset
+        return Note.objects.filter(
+            user=self.request.user,
+            category_id=self.kwargs['category_pk']
+        )
 
     def perform_create(self, serializer):
         category = serializer.validated_data['category']
