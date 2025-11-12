@@ -26,3 +26,15 @@ export const formatRelativeDate = (dateString: string): string => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
 };
+
+export const formatDetailedDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+    });
+};
