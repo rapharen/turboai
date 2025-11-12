@@ -19,9 +19,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    note_count = serializers.IntegerField(read_only=True)
+
     class Meta:
         model = Category
-        fields = ('id', 'name', 'color')
+        fields = ('id', 'name', 'color', 'note_count')
 
 
 class NoteSerializer(serializers.ModelSerializer):

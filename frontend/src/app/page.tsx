@@ -55,7 +55,7 @@ function NotesPageContent() {
 
     return (
         <div className="flex min-h-screen bg-[--color-background]">
-            <Sidebar notes={notes} categories={categories}/>
+            <Sidebar categories={categories}/>
             <main className="flex-1 flex flex-col">
                 <div className="flex justify-end items-center py-6 px-8">
                     <Link href="/notes/new">

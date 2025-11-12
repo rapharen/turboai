@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.db.models import Count
 from rest_framework import viewsets, generics, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -34,7 +35,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Category.objects.filter(user=self.request.user)
+        return Category.objects.filter(user=self.request.user).annotate(note_count=Count('notes'))
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

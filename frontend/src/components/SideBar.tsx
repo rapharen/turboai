@@ -1,16 +1,13 @@
 import {useSearchParams, useRouter} from "next/navigation";
-import {useMemo} from "react";
 import Link from "next/link";
 import {Category} from "@/types/category";
-import {Note} from "@/types/note";
 import {useAuth} from '@/context/AuthContext';
 
 interface SidebarProps {
-    notes: Note[]
     categories: Category[]
 }
 
-const Sidebar = ({notes, categories}: SidebarProps) => {
+const Sidebar = ({categories}: SidebarProps) => {
     const searchParams = useSearchParams();
     const activeCategory = searchParams.get('category_id');
     const {logout} = useAuth();
@@ -20,13 +17,6 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
         logout();
         router.push('/login');
     };
-
-    const categoryCounts = useMemo(() => {
-        return notes.reduce((acc, note) => {
-            acc[note.category.id] = (acc[note.category.id] || 0) + 1;
-            return acc;
-        }, {} as Record<string, number>);
-    }, [notes]);
 
     return (
         <aside className="w-[213px] bg-[--color-background] flex-shrink-0">
@@ -63,7 +53,7 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
                                     <span className="text-sm">{cat.name}</span>
                                 </div>
                                 <span className="text-xs font-bold text-[--color-foreground]/50">
-                                    {categoryCounts[cat.id] || 0}
+                                    {cat.note_count}
                                 </span>
                             </Link>
                         </li>
