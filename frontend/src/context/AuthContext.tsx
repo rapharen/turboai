@@ -10,22 +10,28 @@ interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
   logout: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userCookie = Cookies.get('user');
-    if (userCookie) {
-      setUser(JSON.parse(userCookie));
+    try {
+      const userCookie = Cookies.get('user');
+      if (userCookie) {
+        setUser(JSON.parse(userCookie));
+      }
+    } finally {
+      setLoading(false);
     }
   }, []);
 
   const login = (userData: User) => {
-    Cookies.set('user', JSON.stringify(userData), { expires: 0 });
+    Cookies.set('user', JSON.stringify(userData));
     setUser(userData);
   };
 
@@ -35,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
