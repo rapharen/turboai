@@ -46,10 +46,10 @@ class NoteViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Note.objects.filter(user=self.request.user)
-        category_pk = self.kwargs.get('category_pk')
-        if category_pk:
-            return queryset.filter(category_id=category_pk)
-        return queryset
+        category_id = self.request.query_params.get('category_id')
+        if category_id:
+            queryset = queryset.filter(category_id=category_id)
+        return queryset.order_by('-last_updated')
 
     def perform_create(self, serializer):
         category = serializer.validated_data['category']

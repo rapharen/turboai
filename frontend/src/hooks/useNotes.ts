@@ -11,7 +11,7 @@ const useNotes = (categoryId?: string) => {
   const fetchNotes = useCallback(async () => {
     try {
       setLoading(true);
-      const endpoint = categoryId ? `/categories/${categoryId}/notes/` : '/notes/';
+      const endpoint = categoryId ? `/notes/?category_id=${categoryId}` : '/notes/';
       const data = await api(endpoint);
       setNotes(data);
     } catch (err) {

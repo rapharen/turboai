@@ -37,7 +37,7 @@ const NoteGrid = ({notes}: { notes: Note[] }) => (
 
 export default function NotesPage() {
     const searchParams = useSearchParams();
-    const activeCategory = searchParams.get('category') || undefined;
+    const activeCategory = searchParams.get('category_id') || undefined;
 
     const {categories, loading: loadingCategories, error: errorCategories} = useCategories();
     const {notes, loading: loadingNotes, error: errorNotes} = useNotes(activeCategory);
