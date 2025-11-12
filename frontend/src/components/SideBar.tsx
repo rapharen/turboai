@@ -1,8 +1,9 @@
-import {useSearchParams} from "next/navigation";
+import {useSearchParams, useRouter} from "next/navigation";
 import {useMemo} from "react";
 import Link from "next/link";
 import {Category} from "@/types/category";
 import {Note} from "@/types/note";
+import {useAuth} from '@/context/AuthContext';
 
 interface SidebarProps {
     notes: Note[]
@@ -12,6 +13,13 @@ interface SidebarProps {
 const Sidebar = ({notes, categories}: SidebarProps) => {
     const searchParams = useSearchParams();
     const activeCategory = searchParams.get('category_id');
+    const {logout} = useAuth();
+    const router = useRouter();
+
+    const handleLogout = () => {
+        logout();
+        router.push('/login');
+    };
 
     const categoryCounts = useMemo(() => {
         return notes.reduce((acc, note) => {
@@ -62,6 +70,15 @@ const Sidebar = ({notes, categories}: SidebarProps) => {
                     ))}
                 </ul>
             </div>
+
+            <div className="p-4 mt-auto">
+                <button
+                    onClick={handleLogout}
+                    className="w-full text-left text-sm text-[--color-foreground]/70 hover:bg-[--color-accent]/10 py-2 px-2 rounded-lg transition-colors">
+                    Logout
+                </button>
+            </div>
+
         </aside>
     );
 };

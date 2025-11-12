@@ -5,5 +5,6 @@ export interface Note {
     title: string;
     content: string;
     category: Category;
-    date: string;
+    category_id: string;
+    last_updated: string;
 }
